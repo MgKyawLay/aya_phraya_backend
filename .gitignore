@@ -46,3 +46,6 @@ coverage/
 # Miscellaneous
 *.zip
 *.tar.gz
+
+# IDE
+/.idea
