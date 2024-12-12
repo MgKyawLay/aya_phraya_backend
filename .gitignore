@@ -49,3 +49,6 @@ coverage/
 
 # IDE
 /.idea
+
+#npm package
+package-lock.json
