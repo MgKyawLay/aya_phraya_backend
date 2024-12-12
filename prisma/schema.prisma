@@ -8,7 +8,7 @@ datasource db {
 }
 
 model users {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid()) // UUID for user ID
   name        String
   phone       String   @unique
   password    String
@@ -17,17 +17,32 @@ model users {
   credit      Int      @default(0)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  
   // relationships
-  creditHistory creditHistory[] // one to many 
+  creditHistory creditHistory[]
+  rechargeRequests rechargeRequests[]
 }
 
 model creditHistory {
-  id           Int      @id @default(autoincrement())
-  user_id      Int
+  id           String   @id @default(uuid()) // UUID for credit history ID
+  user_id      String
   amount       Int
   transaction_type String
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
   // relationships
+  user users @relation(fields: [user_id], references: [id], onDelete: NoAction)
+}
+
+model rechargeRequests {
+  id          String   @id @default(uuid()) // UUID for recharge request ID
+  user_id     String
+  amount      Int
+  status      String   @default("pending") // "pending", "approved", "rejected"
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // relationships
+  // user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user users @relation(fields: [user_id], references: [id], onDelete: NoAction)
 }
