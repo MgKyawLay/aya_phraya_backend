@@ -32,6 +32,7 @@ async function main() {
       credit: 100,
     },
   });
+  
 
   // Seed Recharge Requests
   const rechargeAlice = await prisma.rechargeRequests.create({

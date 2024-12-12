@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const JWT_SECRET = "jwt-secret";
 
 const generateJwtToken = (payload) => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "1hr" });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: 60 * 60 * 24 }); // 24 hr
 };
 
 const regsiterUser = async (req, res) => {
@@ -35,12 +35,18 @@ const regsiterUser = async (req, res) => {
     return ResponseModel.success(
       res,
       null,
-      { token: generateJwtToken(user) },
+      {
+        token: generateJwtToken({
+          id: user.id,
+          role: user.role === 1 ? "admin" : "agent",
+        }),
+        expiresIn: 60 * 60 * 24,
+      },
       200
     );
   } catch (error) {
-    console.error("auth controller error", error);
-    return ResponseModel.error(res, null, error);
+    console.error("auth controller error");
+    return ResponseModel.error(res, null);
   } finally {
     await prisma.$disconnect();
   }
@@ -55,16 +61,23 @@ const loginUser = async (req, res) => {
     const user = await prisma.users.findUnique({ where: { phone } });
     if (!user) return ResponseModel.error(res, null, null, 404);
     const isValidPassword = bcrypt.compareSync(password, user.password);
-    if (!isValidPassword) return ResponseModel.error(res, "wrong credital!", null, 401);
+    if (!isValidPassword)
+      return ResponseModel.error(res, "wrong credital!", null, 401);
     return ResponseModel.success(
       res,
       null,
-      { token: generateJwtToken(user) },
+      {
+        token: generateJwtToken({
+          id: user.id,
+          role: user.role === 1 ? "admin" : "agent",
+        }),
+        expiresIn: 60 * 60 * 24,
+      },
       200
     );
   } catch (error) {
     console.error("auth controller error", error);
-    return ResponseModel.error(res, null, error);
+    return ResponseModel.error(res, null);
   } finally {
     await prisma.$disconnect();
   }
