@@ -1,6 +1,6 @@
 const express = require('express');
 const { authenticateToken } = require('../middlewares/middleware');
-const { requestRecharge } = require('../controller/rechargeController');
+const { requestRecharge, approveRecharge } = require('../controller/rechargeController');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -11,5 +11,6 @@ router.get('/recharge-request', (req, res) => {
     return res.status(500).json({message: "wrong method"});
 });
 router.post('/recharge-request', requestRecharge);
+router.post('/approve-request', approveRecharge);
 
 module.exports = router;

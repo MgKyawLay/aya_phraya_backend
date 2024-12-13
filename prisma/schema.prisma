@@ -8,42 +8,36 @@ datasource db {
 }
 
 model users {
-  id          String   @id @default(uuid()) // UUID for user ID
-  name        String
-  phone       String   @unique
-  password    String
-  referral_id String   @unique
-  role        Int      @default(2)
-  points      Int      @default(0)
-  credit      Int      @default(0)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-
-  // relationships
+  id               String             @id @default(uuid())
+  name             String
+  phone            String             @unique
+  password         String
+  referral_id      String             @unique
+  role             Int                @default(2)
+  points           Int                @default(0)
+  credit           Int                @default(0)
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
   creditHistory    creditHistory[]
   rechargeRequests rechargeRequests[]
 }
 
 model creditHistory {
-  id               String   @id @default(uuid()) // UUID for credit history ID
+  id               String   @id @default(uuid())
   user_id          String
   amount           Int
   transaction_type String
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
-  // relationships
   user             users    @relation(fields: [user_id], references: [id], onDelete: NoAction)
 }
 
 model rechargeRequests {
-  id         String   @id @default(uuid()) // UUID for recharge request ID
+  id         String   @id @default(uuid())
   user_id    String
   amount     Int
-  status     String   @default("pending") // "pending", "approved", "rejected"
+  status     String   @default("pending")
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  // relationships
-  // user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user users @relation(fields: [user_id], references: [id], onDelete: NoAction)
+  user       users    @relation(fields: [user_id], references: [id], onDelete: NoAction)
 }

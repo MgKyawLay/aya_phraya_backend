@@ -61,8 +61,7 @@ const loginUser = async (req, res) => {
     const user = await prisma.users.findUnique({ where: { phone } });
     if (!user) return ResponseModel.error(res, null, null, 404);
     const isValidPassword = bcrypt.compareSync(password, user.password);
-    if (!isValidPassword)
-      return ResponseModel.error(res, "wrong credital!", null, 401);
+    if (!isValidPassword) return ResponseModel.error(res, "wrong credital!", null, 401);
     return ResponseModel.success(
       res,
       null,

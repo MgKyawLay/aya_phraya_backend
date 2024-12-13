@@ -1,31 +1,40 @@
-version: '3.8'
-
+version: "3"
 services:
-  app:
-    build:
-      context: .
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: "postgresql://postgres:admin123@db:5432/aya_phraya?schema=public"
-    depends_on:
-      - db
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-
-  db:
-    image: postgres:15
+  postgres:
+    image: postgres:17.2-alpine
     container_name: postgres
-    restart: always
+    hostname: postgres
+    ports:
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: aya_phraya
-    ports:
-      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - aya-phraya-network
+
+  aya-pharaya-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aya-pharaya-app
+    environment: 
+      DATABASE_URL: "postgresql://postgres:admin123@postgres:5432/aya_phraya?schema=public"
+      HOST: 0.0.0.0
+      PORT: 3000
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - aya-phraya-network
 
 volumes:
-  pgdata:
+  postgres-data:
+
+networks:
+  aya-phraya-network:
+    driver: bridge
